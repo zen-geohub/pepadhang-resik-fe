@@ -3,8 +3,10 @@ import { Button } from "../ui/button";
 import { ArchiveIcon, DashboardIcon, HomeIcon } from "@radix-ui/react-icons";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { cn } from "@/lib/utils";
+import { useLogin } from "@/contexts/LoginContext";
 
 const SidebarNavigation = ({ active }: { active: string }) => {
+  const {isLogin} = useLogin()
 
   return (
     <aside className="bg-foreground w-fit lg:min-w-48 h-full flex flex-col justify-between p-2 lg:p-3">
@@ -30,7 +32,7 @@ const SidebarNavigation = ({ active }: { active: string }) => {
             <span className="hidden ml-1 lg:block">Dashboard</span>
           </Link>
         </Button>
-        <Button
+        {isLogin && <Button
           variant={active === "admin" ? "default" : "ghost"}
           className={cn(
             active === "admin" ? "" : "bg-secondary-foreground",
@@ -41,7 +43,7 @@ const SidebarNavigation = ({ active }: { active: string }) => {
             <ArchiveIcon className="lg:w-5 lg:h-5" />{" "}
             <span className="hidden ml-1 lg:block">Basisdata</span>
           </Link>
-        </Button>
+        </Button>}
       </div>
       <div className="flex items-center gap-2">
         <Avatar>

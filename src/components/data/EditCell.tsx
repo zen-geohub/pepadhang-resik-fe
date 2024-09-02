@@ -1,8 +1,9 @@
-import { AdvertisePoint } from "@/contexts/DataContext";
+import { AdvertisePoint, useData } from "@/contexts/DataContext";
 import { Row, Table } from "@tanstack/react-table";
 import { Dispatch, MouseEvent, SetStateAction } from "react";
 import { Button } from "../ui/button";
 import { CheckIcon, Cross1Icon, Pencil1Icon } from "@radix-ui/react-icons";
+import { toast } from "sonner";
 
 interface EditCellProps<TData> {
   row: Row<TData>;
@@ -21,6 +22,8 @@ const EditCell = <TData extends object>({
   row,
   table,
 }: EditCellProps<TData>) => {
+  const {fetchData} = useData()
+
   const tableMeta = table.options.meta;
 
   const setEditedRows = (e: MouseEvent<HTMLButtonElement>) => {
@@ -52,7 +55,10 @@ const EditCell = <TData extends object>({
           }),
         })
           .then((response) => response.json())
-          .then((data) => console.log(data))
+          .then((data) => {
+            toast(data.message)
+            fetchData()
+          })
           .catch((err) => console.log(err));
       }
 

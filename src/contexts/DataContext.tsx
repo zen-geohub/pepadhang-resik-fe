@@ -54,37 +54,42 @@ export type AdvertisePoint = {
 interface AdvertiseContext {
   advertisePoint: AdvertisePoint[];
   setAdvertisePoint: Dispatch<SetStateAction<AdvertisePoint[]>>;
+  fetchData: () => Promise<void>
 }
 
 const AdvertiseData = createContext<AdvertiseContext>({
   advertisePoint: [],
   setAdvertisePoint: () => {},
+  fetchData: async () => {}
 });
 
 export const DataContext: FC<{ children: ReactNode }> = ({ children }) => {
   const [advertisePoint, setAdvertisePoint] = useState<AdvertisePoint[]>([]);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND}/data`, {
-          method: "GET",
-        });
+  const fetchData = async() => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND}/data`, {
+        method: "GET",
+      });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setAdvertisePoint(data);
-      } catch (error) {
-        console.log("Failed to fetch data: ", error);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
-    })();
+
+      const data = await response.json();
+      setAdvertisePoint(data);
+      console.log(data[0])
+    } catch (error) {
+      console.log("Failed to fetch data: ", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
   }, []);
 
   return (
-    <AdvertiseData.Provider value={{ advertisePoint, setAdvertisePoint }}>
+    <AdvertiseData.Provider value={{ advertisePoint, setAdvertisePoint, fetchData }}>
       {children}
     </AdvertiseData.Provider>
   );

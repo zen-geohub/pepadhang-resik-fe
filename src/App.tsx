@@ -6,21 +6,26 @@ import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Submission from "./pages/Submission";
 import DataManager from "./pages/DataManager";
+import { LoginContext } from "./contexts/LoginContext";
+import { Toaster } from "./components/ui/sonner";
 
 function App() {
   return (
     <HashRouter>
       <ThemeProvider>
-        <DataContext>
-          <MapProvider>
-            <Routes>
-              <Route path="/" element={<Home />}/>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/pengajuan" element={<Submission />} />
-              <Route path="/admin" element={<DataManager />} />
-            </Routes>
-          </MapProvider>
-        </DataContext>
+        <LoginContext>
+          <DataContext>
+            <MapProvider>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/pengajuan" element={<Submission />} />
+                <Route path="/admin" element={<DataManager />} />
+              </Routes>
+              <Toaster />
+            </MapProvider>
+          </DataContext>
+        </LoginContext>
       </ThemeProvider>
     </HashRouter>
   );
