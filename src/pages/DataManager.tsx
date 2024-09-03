@@ -1,7 +1,7 @@
 import SidebarNavigation from "@/components/dashboard/SidebarNavigation";
 import { columns } from "@/components/data/columns";
 import DataTable from "@/components/data/DataTable";
-import { useData } from "@/contexts/DataContext";
+import { useData } from "@/hooks/useData";
 
 const DataManager = () => {
   const { advertisePoint } = useData();

@@ -13,15 +13,15 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { useLogin } from "@/contexts/LoginContext";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { useLogin } from "@/hooks/useLogin";
 
 const loginFormSchema = z.object({
-  username: z.string().min(1, 'Nama pengguna tidak boleh kosong!'),
-  password: z.string().min(1, 'Kata sandi tidak boleh kosong!'),
+  username: z.string().min(1, "Nama pengguna tidak boleh kosong!"),
+  password: z.string().min(1, "Kata sandi tidak boleh kosong!"),
 });
 
 type LoginFormSchema = z.infer<typeof loginFormSchema>;
@@ -84,7 +84,9 @@ const LoginDialog = () => {
                 );
               }}
             />
-            <Button type="submit">Login</Button>
+            <div className="flex justify-end">
+              <Button type="submit">Login</Button>
+            </div>
           </form>
         </Form>
       </div>

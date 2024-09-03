@@ -4,7 +4,6 @@ import {
   FC,
   ReactNode,
   SetStateAction,
-  useContext,
   useEffect,
   useState,
 } from "react";
@@ -57,7 +56,7 @@ interface AdvertiseContext {
   fetchData: () => Promise<void>
 }
 
-const AdvertiseData = createContext<AdvertiseContext>({
+export const AdvertiseData = createContext<AdvertiseContext>({
   advertisePoint: [],
   setAdvertisePoint: () => {},
   fetchData: async () => {}
@@ -78,7 +77,7 @@ export const DataContext: FC<{ children: ReactNode }> = ({ children }) => {
 
       const data = await response.json();
       setAdvertisePoint(data);
-      console.log(data[0])
+      // console.log(data[0])
     } catch (error) {
       console.log("Failed to fetch data: ", error);
     }
@@ -95,8 +94,4 @@ export const DataContext: FC<{ children: ReactNode }> = ({ children }) => {
   );
 };
 
-export const useData = () => {
-  const context = useContext(AdvertiseData);
 
-  return context;
-};

@@ -1,9 +1,10 @@
-import { AdvertisePoint, useData } from "@/contexts/DataContext";
+import { AdvertisePoint } from "@/contexts/DataContext";
 import { Row, Table } from "@tanstack/react-table";
 import { Dispatch, MouseEvent, SetStateAction } from "react";
 import { Button } from "../ui/button";
 import { CheckIcon, Cross1Icon, Pencil1Icon } from "@radix-ui/react-icons";
 import { toast } from "sonner";
+import { useData } from "@/hooks/useData";
 
 interface EditCellProps<TData> {
   row: Row<TData>;
@@ -22,7 +23,7 @@ const EditCell = <TData extends object>({
   row,
   table,
 }: EditCellProps<TData>) => {
-  const {fetchData} = useData()
+  const { fetchData } = useData();
 
   const tableMeta = table.options.meta;
 
@@ -40,9 +41,6 @@ const EditCell = <TData extends object>({
       }
       if (status === "done") {
         const { _id, properties, type } = row.original as AdvertisePoint;
-        // const {
-        //   Nomor, Kode, Ukuran
-        // } = properties
 
         fetch(`${import.meta.env.VITE_BACKEND}/data/${_id}`, {
           method: "PUT",
@@ -53,11 +51,12 @@ const EditCell = <TData extends object>({
             type: type,
             properties: properties,
           }),
+          credentials: "include"
         })
           .then((response) => response.json())
           .then((data) => {
-            toast(data.message)
-            fetchData()
+            toast(data.message);
+            fetchData();
           })
           .catch((err) => console.log(err));
       }
