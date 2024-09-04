@@ -1,4 +1,4 @@
-import { HashRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { MapProvider } from "react-map-gl/maplibre";
 import { ThemeProvider } from "./components/theme-provider";
 import { DataContext } from "./contexts/DataContext";
@@ -11,7 +11,7 @@ import { Toaster } from "./components/ui/sonner";
 
 function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <ThemeProvider>
         <LoginContext>
           <DataContext>
@@ -27,7 +27,7 @@ function App() {
           </DataContext>
         </LoginContext>
       </ThemeProvider>
-    </HashRouter>
+    </BrowserRouter>
   );
 }
 

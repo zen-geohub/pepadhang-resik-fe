@@ -14,4 +14,4 @@ RUN npm run build
 
 EXPOSE 3009
 
-CMD ["server", "-s", "dist", "-p", "3009"]
+CMD ["serve", "-s", "dist", "-p", "3009"]
