@@ -36,7 +36,7 @@ const SubmissionMap = ({
         tiles={[
           `${
             import.meta.env.VITE_GEOSERVER
-          }/gwc/service/tms/1.0.0/Karanganyar:merged@EPSG%3A900913@pbf/{z}/{x}/{y}.pbf`,
+          }/gwc/service/tms/1.0.0/ppids:merged@EPSG%3A900913@pbf/{z}/{x}/{y}.pbf`,
         ]}
       >
         {/* <Layer
@@ -60,7 +60,7 @@ const SubmissionMap = ({
         tiles={[
           `${
             import.meta.env.VITE_GEOSERVER
-          }/gwc/service/tms/1.0.0/Karanganyar:batas_administrasi_ar_kel@EPSG%3A900913@pbf/{z}/{x}/{y}.pbf`,
+          }/gwc/service/tms/1.0.0/ppids:batas_administrasi_ar_kel@EPSG%3A900913@pbf/{z}/{x}/{y}.pbf`,
         ]}
       >
         <Layer

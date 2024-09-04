@@ -40,11 +40,17 @@ const KeyFeature = () => {
       <h1 className="font-bold text-2xl ">Daftar Fitur</h1>
       <Separator className="mb-12 w-24" />
       <div className="flex flex-col lg:flex-row gap-16">
-        <FeatureCard
-          title="Regulasi"
-          desc="Informasi Regulasi Tata Ruang."
-          logo={<GearIcon className="w-12 h-12 lg:h-16 lg:w-16" />}
-        />
+        <a
+          href="https://drive.google.com/drive/folders/1lGjxC7qE83MCABPcui7z5JkGlcGKsICI?usp=sharing"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <FeatureCard
+            title="Regulasi"
+            desc="Informasi Regulasi Tata Ruang."
+            logo={<GearIcon className="w-12 h-12 lg:h-16 lg:w-16" />}
+          />
+        </a>
         <Link to={"/pengajuan"}>
           <FeatureCard
             title="Layanan"

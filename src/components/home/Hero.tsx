@@ -3,7 +3,7 @@ import logoPepadhang from "../../assets/LogoPepadhang (1).png";
 import { Link } from "react-router-dom";
 import heroLight from "../../assets/hero_light.png";
 import heroDark from "../../assets/hero_dark.png";
-import { useTheme } from "../theme-provider";
+import { useTheme } from "@/hooks/useTheme";
 
 const Hero = () => {
   const { theme } = useTheme();

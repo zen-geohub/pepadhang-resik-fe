@@ -8,10 +8,10 @@ import {
   useMap,
 } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useData } from "@/contexts/DataContext";
 import type { FeatureCollection } from "geojson";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { AdvertisingFeature } from "@/pages/Dashboard";
+import { useData } from "@/hooks/useData";
 
 interface CustomMapMouseEvent extends MapMouseEvent {
   features?: MapGeoJSONFeature[];
@@ -184,6 +184,17 @@ const DashboardMap = ({ setFeature }: ClickProps) => {
       reuseMaps
     >
       <NavigationControl position="bottom-left" />
+      <div className="absolute bottom-[10px] left-12 h-[87px] bg-white z-10 p-1 lg:px-2 rounded font-poppins text-black">
+        <h6 className="font-bold mb-1 text-sm lg:text-base">Legenda</h6>
+        <div className="flex gap-1 mb-2 items-center lg:mb-1 text-xs lg:text-sm">
+          <div className="bg-red-500 h-5 w-5"></div>
+          <p>Dibongkar</p>
+        </div>
+        <div className="flex gap-1 items-center text-xs lg:text-sm">
+          <div className="bg-blue-500 h-5 w-5"></div>
+          <p>Eksisting</p>
+        </div>
+      </div>
       {featureCollection && (
         <Source
           id="advertisingSource"
@@ -197,11 +208,11 @@ const DashboardMap = ({ setFeature }: ClickProps) => {
             paint={{
               "circle-color": [
                 "case",
-                ['==', ['get', 'Kondisi'], 'Eksisting'],
-                '#3182bd',
-                ['==', ['get', 'Kondisi'], 'Dibongkar'],
-                '#de2d26',
-                '#3182bd'
+                ["==", ["get", "Kondisi"], "Eksisting"],
+                "#3182bd",
+                ["==", ["get", "Kondisi"], "Dibongkar"],
+                "#de2d26",
+                "#3182bd",
               ],
               "circle-radius": 5,
               "circle-stroke-color": [

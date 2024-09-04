@@ -136,7 +136,10 @@ const Submission = () => {
       <div className="w-dvw h-dvh bg-background flex flex-col lg:flex-row p-2 gap-2 overflow-auto font-poppins">
         <main className="relative w-full lg:w-1/2 h-fit lg:h-full ">
           <Link to="/">
-            <Button variant="link" className="absolute text-black">
+            <Button
+              variant="link"
+              className="absolute text-secondary-foreground text-xs lg:no-underline underline"
+            >
               <ChevronLeftIcon /> Kembali
             </Button>
           </Link>
@@ -144,11 +147,11 @@ const Submission = () => {
             <form onSubmit={onSubmit}>
               <Card className="max-h-dvh">
                 <CardHeader>
-                  <CardTitle className="text-center text-xl font-bold">
+                  <CardTitle className="text-center text-lg lg:text-xl font-bold">
                     Formulir Permohonan
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="">
+                <CardContent>
                   <ScrollArea className="h-[calc(100dvh-400px)] lg:h-[calc(100dvh-118px)]">
                     <ApplicantData control={control} />
                     <LocationData
@@ -162,7 +165,7 @@ const Submission = () => {
                     />
                     <div className="w-full flex justify-end">
                       <DialogTrigger
-                        className="mt-2 mr-2 bg-primary p-2 rounded-md flex justify-center items-center"
+                        className="mt-2 mr-2 bg-primary p-2 rounded-md flex justify-center items-center lg:text-base text-sm text-primary-foreground font-semibold"
                         type="submit"
                         disabled={!formState.isValid}
                       >

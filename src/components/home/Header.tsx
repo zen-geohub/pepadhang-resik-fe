@@ -1,11 +1,15 @@
-import { EnterIcon } from "@radix-ui/react-icons";
+import { EnterIcon, ExitIcon } from "@radix-ui/react-icons";
 import { Button } from "../ui/button";
 import ToggleTheme from "../ToggleTheme";
 import logoYogya from "../../assets/Logo_Kota_Yogyakarta.7e10e58cc5c567f49755.png";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { DialogTrigger } from "../ui/dialog";
+import { useLogin } from "@/hooks/useLogin";
+import { toast } from "sonner";
 
 const Header = () => {
+  const { isLogin, setIsLogin } = useLogin();
   const [fixedHeader, setFixedHeader] = useState<boolean>(false);
 
   function onScroll() {
@@ -40,9 +44,35 @@ const Header = () => {
       </div>
       <div className="flex gap-2 items-center">
         <ToggleTheme />
-        <Button size="icon">
-          <EnterIcon />
-        </Button>
+        {isLogin.user !== "" ? (
+          <Button
+            variant="destructive"
+            onClick={() => {
+              fetch(`${import.meta.env.VITE_BACKEND}/logout`, {
+                method: "GET",
+                credentials: "include",
+              })
+                .then((response) => response.json())
+                .then((auth) => {
+                  setIsLogin({ user: "", role: "" });
+                  toast(auth.message);
+                })
+                // .then((state) => {
+                //   state.RTN === true ? setIsLogin(false) : setIsLogin(true);
+                // })
+                .catch((err) => console.log(err));
+            }}
+            className="p-[10px] lg:py-[5px] lg:px-4"
+          >
+            <span className="hidden lg:inline-block font-sans text-sm font-semibold">Logout</span>
+            <ExitIcon className="lg:hidden" />
+          </Button>
+        ) : (
+          <DialogTrigger className="bg-primary p-[10px] lg:py-[5px] lg:px-4 rounded-md">
+            <span className="hidden lg:inline-block font-sans text-primary-foreground text-sm font-semibold">Login</span>
+            <EnterIcon className="lg:hidden" />
+          </DialogTrigger>
+        )}
       </div>
     </header>
   );
