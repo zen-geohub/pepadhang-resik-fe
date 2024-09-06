@@ -55,11 +55,9 @@ const Header = () => {
                 .then((response) => response.json())
                 .then((auth) => {
                   setIsLogin({ user: "", role: "" });
+                  sessionStorage.removeItem('user')
                   toast(auth.message);
                 })
-                // .then((state) => {
-                //   state.RTN === true ? setIsLogin(false) : setIsLogin(true);
-                // })
                 .catch((err) => console.log(err));
             }}
             className="p-[10px] lg:py-[5px] lg:px-4"

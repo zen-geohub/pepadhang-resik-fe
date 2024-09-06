@@ -8,6 +8,7 @@ import Submission from "./pages/Submission";
 import DataManager from "./pages/DataManager";
 import { LoginContext } from "./contexts/LoginContext";
 import { Toaster } from "./components/ui/sonner";
+import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
   return (
@@ -18,9 +19,11 @@ function App() {
             <MapProvider>
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route element={<ProtectedRoute />}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/admin" element={<DataManager />} />
+                </Route>
                 <Route path="/pengajuan" element={<Submission />} />
-                <Route path="/admin" element={<DataManager />} />
               </Routes>
               <Toaster />
             </MapProvider>

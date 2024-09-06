@@ -73,6 +73,7 @@ export const LoginContext: FC<{ children: ReactNode }> = ({ children }) => {
               user: data.user,
               role: data.role,
             });
+            sessionStorage.setItem('user', data.user)
           } else {
             setIsLogin({
               role: "",
@@ -80,11 +81,6 @@ export const LoginContext: FC<{ children: ReactNode }> = ({ children }) => {
             });
           }
 
-          // if (data.RTN) {
-          //   setIsLogin(true);
-          // } else {
-          //   setIsLogin(false);
-          // }
           toast(data.message);
         }
       } catch (error) {
@@ -94,7 +90,7 @@ export const LoginContext: FC<{ children: ReactNode }> = ({ children }) => {
   }, [user]);
 
   useEffect(() => {
-    (async () => {
+    sessionStorage.getItem('user') && (async () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_BACKEND}/login`, {
           method: "GET",
@@ -107,15 +103,11 @@ export const LoginContext: FC<{ children: ReactNode }> = ({ children }) => {
             role: auth.role,
           });
         }
-        // if (auth !== "unauthorized") {
-        //   setIsLogin(true);
-        // }
-        // console.log(response);
       } catch (error) {
-        console.log(error);
+        console.error
       }
     })();
-  }, []);
+  }, [isLogin]);
 
   return (
     <LoginData.Provider value={{ isLogin, setIsLogin, user, setUser }}>
