@@ -107,7 +107,7 @@ export const LoginContext: FC<{ children: ReactNode }> = ({ children }) => {
         console.error
       }
     })();
-  }, [isLogin]);
+  }, []);
 
   return (
     <LoginData.Provider value={{ isLogin, setIsLogin, user, setUser }}>
