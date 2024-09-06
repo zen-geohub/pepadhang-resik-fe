@@ -67,9 +67,9 @@ const Submission = () => {
   const naskah = watch("Naskah");
 
   const onSubmit = handleSubmit((value) => {
-    console.log(value);
     setFormValue(value);
   });
+
 
   useEffect(() => {
     function onClick(e: MapMouseEvent) {
@@ -96,6 +96,10 @@ const Submission = () => {
         );
         setValue("Kelurahan", administrasi[0].properties.desa.split(" ").pop());
       }
+      mapSubmission?.flyTo({
+        center: e.lngLat,
+        zoom: 15
+      })
       setValue("Koordinat Lintang", e.lngLat.lat);
       setValue("Koordinat Bujur", e.lngLat.lng);
       simpang && simpang.length > 0

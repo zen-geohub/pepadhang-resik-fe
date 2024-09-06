@@ -4,9 +4,11 @@ import { Link } from "react-router-dom";
 import heroLight from "../../assets/hero_light.png";
 import heroDark from "../../assets/hero_dark.png";
 import { useTheme } from "@/hooks/useTheme";
+import { useLogin } from "@/hooks/useLogin";
 
 const Hero = () => {
   const { theme } = useTheme();
+  const { isLogin } = useLogin();
 
   return (
     <div className="w-full h-full relative font-poppins">
@@ -35,9 +37,11 @@ const Hero = () => {
             Yogyakarta Nomor 32 Tahun 2023 tentang Peraturan Pelaksanaan
             Peraturan Daerah Kota Yogyakarta Nomor 6 Tahun 2022 tentang Reklame.
           </p>
-          <Link to={"/dashboard"}>
-            <Button className="w-fit">Masuk</Button>
-          </Link>
+          {isLogin.role === "admin" && (
+            <Link to={"/dashboard"}>
+              <Button className="w-fit">Masuk</Button>
+            </Link>
+          )}
         </div>
       </div>
     </div>

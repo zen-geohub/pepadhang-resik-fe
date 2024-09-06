@@ -1,3 +1,4 @@
+import { useLogin } from "@/hooks/useLogin";
 import {
   createContext,
   Dispatch,
@@ -7,6 +8,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { toast } from "sonner";
 
 type AdvertiseProperties = {
   Nomor: string;
@@ -64,11 +66,13 @@ export const AdvertiseData = createContext<AdvertiseContext>({
 
 export const DataContext: FC<{ children: ReactNode }> = ({ children }) => {
   const [advertisePoint, setAdvertisePoint] = useState<AdvertisePoint[]>([]);
+  const {isLogin} = useLogin()
 
   const fetchData = async() => {
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND}/data`, {
         method: "GET",
+        credentials: "include"
       });
 
       if (!response.ok) {
@@ -77,15 +81,15 @@ export const DataContext: FC<{ children: ReactNode }> = ({ children }) => {
 
       const data = await response.json();
       setAdvertisePoint(data);
-      // console.log(data[0])
     } catch (error) {
-      console.log("Failed to fetch data: ", error);
+      console.log("Gagal mendapatkan data: ", error);
+      toast('Gagal mendapatkan data.')
     }
   }
 
   useEffect(() => {
-    fetchData()
-  }, []);
+    isLogin.role === "admin" && fetchData()
+  }, [isLogin]);
 
   return (
     <AdvertiseData.Provider value={{ advertisePoint, setAdvertisePoint, fetchData }}>

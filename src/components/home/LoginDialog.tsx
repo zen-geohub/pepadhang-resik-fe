@@ -60,7 +60,7 @@ const LoginDialog = () => {
               render={({ field }) => {
                 return (
                   <FormItem>
-                    <FormLabel>Nama Pengguna</FormLabel>
+                    <FormLabel>Nama pengguna</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
