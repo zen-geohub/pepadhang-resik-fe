@@ -13,15 +13,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Control } from "react-hook-form";
-import { SubmissionSchema } from "../submissionSchema";
+import { useFormContext } from "react-hook-form";
 
-type FormProps = {
-  control: Control<SubmissionSchema>;
-  selectedRencanaPenempatan: SubmissionSchema["Rencana Penempatan"];
-};
+const LocationData = () => {
+  const { control, watch } = useFormContext();
+  const selectedRencanaPenempatan = watch("Rencana Penempatan");
 
-const LocationData = ({ control, selectedRencanaPenempatan }: FormProps) => {
   return (
     <>
       <p className="mt-4 font-semibold text-sm lg:text-normal">

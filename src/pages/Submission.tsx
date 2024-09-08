@@ -6,11 +6,7 @@ import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { MapMouseEvent, useMap } from "react-map-gl/maplibre";
-import {
-  ChevronLeftIcon,
-  SewingPinFilledIcon,
-  SewingPinIcon,
-} from "@radix-ui/react-icons";
+import { ChevronLeftIcon, Cross1Icon, PlusIcon } from "@radix-ui/react-icons";
 import { toast } from "sonner";
 
 import {
@@ -21,20 +17,18 @@ import ApplicantData from "@/components/submission/FormData/ApplicantData";
 import LocationData from "@/components/submission/FormData/LocationData";
 import SubmissionMap from "@/components/submission/SubmissionMap";
 import BillboardSpecification from "@/components/submission/FormData/BillboardSpecification";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import PDFTemplate from "@/components/submission/PDFTemplate";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
+import html2canvas from "html2canvas";
+import ScreenshotMap from "@/components/submission/ScreenshotMap";
+import { cn } from "@/lib/utils";
+import FormDialog from "@/components/submission/FormDialog";
 
 const Submission = () => {
-  const { mapSubmission } = useMap();
+  const { mapSubmission, mapScreenshot } = useMap();
+  const [image, setImage] = useState<string>();
   const [toggleAdd, setToggleAdd] = useState<boolean>(false);
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [formValue, setFormValue] = useState<object>({});
   const form = useForm<SubmissionSchema>({
     resolver: zodResolver(submissionSchema),
@@ -60,60 +54,76 @@ const Submission = () => {
     },
   });
 
-  const { control, handleSubmit, watch, setValue, formState } = form;
-
-  const selectedRencanaPenempatan = watch("Rencana Penempatan");
-  const area = watch("Ukuran Panjang (m)") * watch("Ukuran Lebar (m)");
-  const naskah = watch("Naskah");
+  const { handleSubmit, setValue, getValues } = form;
 
   const onSubmit = handleSubmit((value) => {
     setFormValue(value);
   });
 
-
   useEffect(() => {
     function onClick(e: MapMouseEvent) {
-      const administrasi = mapSubmission?.queryRenderedFeatures(e.point, {
-        layers: ["batasAdmin"],
-      });
-      const simpang = mapSubmission?.queryRenderedFeatures(e.point, {
-        layers: ["constraints"],
-        filter: ["==", ["get", "layer"], "Simpang"],
-      });
-      const zonaKhusus = mapSubmission?.queryRenderedFeatures(e.point, {
-        layers: ["constraints"],
-        filter: ["==", ["get", "layer"], "Zona Khusus"],
-      });
-      const clearArea = mapSubmission?.queryRenderedFeatures(e.point, {
-        layers: ["constraints"],
-        filter: ["==", ["get", "layer"], "Clear Area"],
-      });
+      const layers = {
+        administrasi: ["batasAdmin"],
+        simpang: ["simpang"],
+        zonaKhusus: ["zonaKhusus"],
+        clearArea: ["clearArea"],
+      };
 
-      if (administrasi && administrasi.length > 0) {
+      const results = Object.fromEntries(
+        Object.entries(layers).map(([key, value]) => [
+          key,
+          mapSubmission?.queryRenderedFeatures(e.point, { layers: value }),
+        ])
+      );
+
+      if (results.administrasi && results.administrasi.length > 0) {
         setValue(
           "Kemantren",
-          administrasi[0].properties.kecamatan.split(" ").pop()
+          results.administrasi[0].properties.kecamatan.split(" ").pop()
         );
-        setValue("Kelurahan", administrasi[0].properties.desa.split(" ").pop());
+        setValue(
+          "Kelurahan",
+          results.administrasi[0].properties.desa.split(" ").pop()
+        );
       }
-      mapSubmission?.flyTo({
+
+      mapScreenshot?.flyTo({
         center: e.lngLat,
-        zoom: 15
-      })
+        zoom: 17,
+        bearing: 0,
+      });
       setValue("Koordinat Lintang", e.lngLat.lat);
       setValue("Koordinat Bujur", e.lngLat.lng);
-      simpang && simpang.length > 0
+      results.simpang && results.simpang.length > 0
         ? setValue("Sudut Simpang", "Simpang")
         : setValue("Sudut Simpang", "Non-simpang");
 
-      if (zonaKhusus && zonaKhusus.length > 0) {
+      if (results.zonaKhusus && results.zonaKhusus.length > 0) {
         toast("Titik berada di Zona Khusus!");
         resetValue();
       }
-      if (clearArea && clearArea.length > 0) {
+      if (results.clearArea && results.clearArea.length > 0) {
         toast("Titik berada di Clear Area!");
         resetValue();
       }
+      if (results.administrasi && results.administrasi.length === 0) {
+        resetValue();
+        toast("Titik berada di luar Kota Yogyakarta!");
+      }
+
+      getValues("Koordinat Bujur") !== 0 &&
+        (async function () {
+          const mapRef = document.getElementById("mapScreenshot");
+          if (mapRef) {
+            mapScreenshot?.once("idle", async () => {
+              const canvas = await html2canvas(mapRef, {
+                scale: 1.5,
+              });
+
+              setImage(canvas.toDataURL("image/png"));
+            });
+          }
+        })();
 
       function resetValue() {
         setValue("Koordinat Lintang", 0);
@@ -126,8 +136,14 @@ const Submission = () => {
 
     if (toggleAdd) {
       mapSubmission?.on("click", onClick);
+      if (mapSubmission) {
+        mapSubmission.getCanvas().style.cursor = "pointer";
+      }
     } else {
       mapSubmission?.off("click", onClick);
+      if (mapSubmission) {
+        mapSubmission.getCanvas().style.cursor = "";
+      }
     }
 
     return () => {
@@ -136,18 +152,18 @@ const Submission = () => {
   }, [toggleAdd, mapSubmission]);
 
   return (
-    <Dialog>
-      <div className="w-dvw h-dvh bg-background flex flex-col lg:flex-row p-2 gap-2 overflow-auto font-poppins">
-        <main className="relative w-full lg:w-1/2 h-fit lg:h-full ">
-          <Link to="/">
-            <Button
-              variant="link"
-              className="absolute text-secondary-foreground text-xs lg:no-underline underline"
-            >
-              <ChevronLeftIcon /> Kembali
-            </Button>
-          </Link>
-          <Form {...form}>
+    <Form {...form}>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <div className="w-dvw h-dvh bg-background flex flex-col lg:flex-row p-2 gap-2 overflow-hidden font-poppins">
+          <main className="relative w-full lg:w-1/2 h-fit lg:h-full ">
+            <Link to="/">
+              <Button
+                variant="link"
+                className="absolute text-secondary-foreground text-xs lg:no-underline underline"
+              >
+                <ChevronLeftIcon /> Kembali
+              </Button>
+            </Link>
             <form onSubmit={onSubmit}>
               <Card className="max-h-dvh">
                 <CardHeader>
@@ -157,21 +173,13 @@ const Submission = () => {
                 </CardHeader>
                 <CardContent>
                   <ScrollArea className="h-[calc(100dvh-400px)] lg:h-[calc(100dvh-118px)]">
-                    <ApplicantData control={control} />
-                    <LocationData
-                      control={control}
-                      selectedRencanaPenempatan={selectedRencanaPenempatan}
-                    />
-                    <BillboardSpecification
-                      control={control}
-                      area={area}
-                      naskah={naskah}
-                    />
+                    <ApplicantData />
+                    <LocationData />
+                    <BillboardSpecification />
                     <div className="w-full flex justify-end">
                       <DialogTrigger
                         className="mt-2 mr-2 bg-primary p-2 rounded-md flex justify-center items-center lg:text-base text-sm text-primary-foreground font-semibold"
                         type="submit"
-                        disabled={!formState.isValid}
                       >
                         Ajukan
                       </DialogTrigger>
@@ -180,92 +188,29 @@ const Submission = () => {
                 </CardContent>
               </Card>
             </form>
-          </Form>
-        </main>
-        <section className="w-full lg:w-1/2 h-80 lg:h-full relative">
-          <SubmissionMap
-            markerLatitude={watch("Koordinat Lintang")}
-            markerLongitude={watch("Koordinat Bujur")}
-          />
-          <Button
-            className="absolute top-2 left-2"
-            size="icon"
-            onClick={() => {
-              setToggleAdd(!toggleAdd);
-            }}
-          >
-            {toggleAdd ? <SewingPinFilledIcon /> : <SewingPinIcon />}
-          </Button>
-        </section>
-      </div>
-      <DialogContent onInteractOutside={(e) => e.preventDefault()}>
-        <DialogHeader>
-          <DialogTitle className="text-center lg:font-bold">
-            Data yang diajukan
-          </DialogTitle>
-        </DialogHeader>
-        <div className="flex flex-col gap-2">
-          <ScrollArea className="h-72">
-            {Object.entries(formValue).map(([key, value]) => {
-              return (
-                <p className="text-xs lg:text-base mb-1" key={key}>
-                  <span className="font-semibold">{key}:</span> {value}
-                </p>
-              );
-            })}
-          </ScrollArea>
-          <div className="w-full flex justify-end gap-2">
-            <Link to="/">
-              <Button variant="ghost">Kembali ke beranda</Button>
-            </Link>
-            <PDFDownloadLink
-              document={
-                <PDFTemplate
-                  result={{
-                    "Nama Pemohon": watch("Nama Pemohon"),
-                    "Alamat Pemohon": watch("Alamat Pemohon"),
-                    "Nomor Telepon/Wa yang Masih Aktif": watch(
-                      "Nomor Telepon/Wa yang Masih Aktif"
-                    ),
-                    "Nama Perusahaan": watch("Nama Perusahaan"),
-                    "Nomor Induk Berusaha": watch("Nomor Induk Berusaha"),
-                    Kemantren: watch("Kemantren"),
-                    Kelurahan: watch("Kelurahan"),
-                    "Koordinat Lintang": watch("Koordinat Lintang"),
-                    "Koordinat Bujur": watch("Koordinat Bujur"),
-                    "Sudut Simpang": watch("Sudut Simpang"),
-                    "Lokasi Reklame": watch("Lokasi Reklame"),
-                    "Rencana Penempatan": watch("Rencana Penempatan"),
-                    "Jenis Reklame": watch("Jenis Reklame"),
-                    "Ukuran Panjang (m)": watch("Ukuran Panjang (m)"),
-                    "Ukuran Lebar (m)": watch("Ukuran Lebar (m)"),
-                    Naskah: watch("Naskah"),
-                    "Kategori Persil Orang atau Badan": watch(
-                      "Kategori Persil Orang atau Badan"
-                    ),
-                    "Kategori Persil Pemerintah, Pemerintah Daerah, dan/atau Fasilitas Umum":
-                      watch(
-                        "Kategori Persil Pemerintah, Pemerintah Daerah, dan/atau Fasilitas Umum"
-                      ),
-                    "Naskah Produk Lainnya": watch("Naskah Produk Lainnya"),
-                    "Sisi Hadap": watch("Sisi Hadap"),
-                  }}
-                />
-              }
-              fileName="KKPR.pdf"
+          </main>
+          <section className="w-full lg:w-1/2 h-80 lg:h-full relative">
+            <ScreenshotMap />
+            <SubmissionMap />
+            <Button
+              className={cn(
+                toggleAdd
+                  ? "bg-destructive hover:bg-destructive hover:opacity-90 text-white"
+                  : "bg-primary",
+                " transition-colors absolute top-2 left-2 z-10"
+              )}
+              size="icon"
+              onClick={() => {
+                setToggleAdd(!toggleAdd);
+              }}
             >
-              {({ loading }) =>
-                loading ? (
-                  <Button variant="ghost">Tunggu...</Button>
-                ) : (
-                  <Button>Cetak</Button>
-                )
-              }
-            </PDFDownloadLink>
-          </div>
+              {toggleAdd ? <Cross1Icon /> : <PlusIcon />}
+            </Button>
+          </section>
         </div>
-      </DialogContent>
-    </Dialog>
+        <FormDialog formValue={formValue} image={image || ""} />
+      </Dialog>
+    </Form>
   );
 };
 

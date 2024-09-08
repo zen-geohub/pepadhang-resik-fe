@@ -12,18 +12,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Control } from "react-hook-form";
-import { SubmissionSchema } from "../submissionSchema";
+import { useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Cross1Icon } from "@radix-ui/react-icons";
 
-type FormProps = {
-  control: Control<SubmissionSchema>;
-  area: number;
-  naskah: SubmissionSchema["Naskah"];
-};
+const BillboardSpecification = () => {
+  const { control, watch } = useFormContext();
+  const area = watch("Ukuran Panjang (m)") * watch("Ukuran Lebar (m)");
+  const naskah = watch("Naskah");
 
-const BillboardSpecification = ({ control, area, naskah }: FormProps) => {
   return (
     <>
       <p className="mt-4 font-semibold text-sm lg:text-normal">

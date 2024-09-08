@@ -6,14 +6,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Control } from "react-hook-form";
+import { Control, useFormContext } from "react-hook-form";
 import { SubmissionSchema } from "../submissionSchema";
 
 export type FormProps = {
   control: Control<SubmissionSchema>;
 };
 
-const ApplicantData = ({ control }: FormProps) => {
+const ApplicantData = () => {
+  const { control } = useFormContext();
+
   return (
     <>
       <p className="font-semibold text-sm lg:text-base">

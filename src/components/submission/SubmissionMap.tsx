@@ -6,16 +6,18 @@ import {
   Source,
 } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
+import { useFormContext } from "react-hook-form";
 
-type SubmissionMapProps = {
+export type SubmissionMapProps = {
   markerLatitude: number;
   markerLongitude: number;
 };
 
-const SubmissionMap = ({
-  markerLatitude,
-  markerLongitude,
-}: SubmissionMapProps) => {
+const SubmissionMap = () => {
+  const { watch } = useFormContext();
+  const markerLatitude = watch("Koordinat Lintang");
+  const markerLongitude = watch("Koordinat Bujur");
+
   return (
     <Map
       id="mapSubmission"
@@ -28,8 +30,20 @@ const SubmissionMap = ({
       attributionControl={false}
       style={{ borderRadius: "8px" }}
       reuseMaps
+      preserveDrawingBuffer
     >
       <NavigationControl />
+      <div className="absolute bottom-2 left-2 h-fit bg-white z-10 p-2 rounded font-poppins text-black">
+        <h6 className="font-bold mb-1 text-sm lg:text-base">Legenda</h6>
+        <div className="flex gap-1 mb-2 items-center lg:mb-1 text-xs lg:text-sm">
+          <div className="bg-[#de2d26] bg-opacity-80 h-5 w-5"></div>
+          <p>Zona Khusus</p>
+        </div>
+        <div className="flex gap-1 items-center text-xs lg:text-sm">
+          <div className="bg-[#fec44f] bg-opacity-80 h-5 w-5"></div>
+          <p>Clear Area</p>
+        </div>
+      </div>
       <Source
         type="vector"
         scheme="tms"
@@ -39,20 +53,43 @@ const SubmissionMap = ({
           }/gwc/service/tms/1.0.0/ppids:merged@EPSG%3A900913@pbf/{z}/{x}/{y}.pbf`,
         ]}
       >
-        {/* <Layer
+        <Layer
           id="simpang"
           type="fill"
           source-layer="merged"
-          // filter={['==', ['get', 'layer'], 'simpang']}
-        /> */}
+          filter={["==", ["get", "layer"], "Simpang"]}
+          paint={{
+            "fill-opacity": 0,
+          }}
+        />
         <Layer
+          id="zonaKhusus"
+          type="fill"
+          source-layer="merged"
+          filter={["==", ["get", "layer"], "Zona Khusus"]}
+          paint={{
+            "fill-opacity": 0.3,
+            "fill-color": "#de2d26",
+          }}
+        />
+        <Layer
+          id="clearArea"
+          type="fill"
+          source-layer="merged"
+          filter={["==", ["get", "layer"], "Clear Area"]}
+          paint={{
+            "fill-opacity": 0.3,
+            "fill-color": "#fec44f",
+          }}
+        />
+        {/* <Layer
           id="constraints"
           type="fill"
           source-layer="merged"
           paint={{
             "fill-opacity": 0,
           }}
-        />
+        /> */}
       </Source>
       <Source
         type="vector"
