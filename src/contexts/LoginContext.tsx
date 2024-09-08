@@ -22,7 +22,7 @@ interface LoginContext {
   setIsLogin: Dispatch<SetStateAction<{ role: string; user: string }>>;
 }
 
-export const LoginData = createContext<LoginContext>({
+export const LoginContext = createContext<LoginContext>({
   user: {
     username: "",
     password: "",
@@ -35,7 +35,7 @@ export const LoginData = createContext<LoginContext>({
   setIsLogin: () => {},
 });
 
-export const LoginContext: FC<{ children: ReactNode }> = ({ children }) => {
+export const LoginProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<{ username: string; password: string }>({
     username: "",
     password: "",
@@ -51,17 +51,20 @@ export const LoginContext: FC<{ children: ReactNode }> = ({ children }) => {
     (async () => {
       try {
         if (username !== "") {
-          const response = await fetch(`${import.meta.env.VITE_BACKEND}/login`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              username: username,
-              password: password,
-            }),
-            credentials: "include",
-          });
+          const response = await fetch(
+            `${import.meta.env.VITE_BACKEND}/login`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                username: username,
+                password: password,
+              }),
+              credentials: "include",
+            }
+          );
 
           if (!response.ok) {
             throw new Error(`Login failed! Status: ${response.status}`);
@@ -73,7 +76,7 @@ export const LoginContext: FC<{ children: ReactNode }> = ({ children }) => {
               user: data.user,
               role: data.role,
             });
-            sessionStorage.setItem('user', data.user)
+            sessionStorage.setItem("user", data.user);
           } else {
             setIsLogin({
               role: "",
@@ -90,28 +93,32 @@ export const LoginContext: FC<{ children: ReactNode }> = ({ children }) => {
   }, [user]);
 
   useEffect(() => {
-    sessionStorage.getItem('user') && (async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND}/login`, {
-          method: "GET",
-          credentials: "include",
-        });
-        const auth = await response.json();
-        if (response.ok) {
-          setIsLogin({
-            user: auth.user,
-            role: auth.role,
-          });
+    sessionStorage.getItem("user") &&
+      (async () => {
+        try {
+          const response = await fetch(
+            `${import.meta.env.VITE_BACKEND}/login`,
+            {
+              method: "GET",
+              credentials: "include",
+            }
+          );
+          const auth = await response.json();
+          if (response.ok) {
+            setIsLogin({
+              user: auth.user,
+              role: auth.role,
+            });
+          }
+        } catch (error) {
+          console.error;
         }
-      } catch (error) {
-        console.error
-      }
-    })();
+      })();
   }, []);
 
   return (
-    <LoginData.Provider value={{ isLogin, setIsLogin, user, setUser }}>
+    <LoginContext.Provider value={{ isLogin, setIsLogin, user, setUser }}>
       {children}
-    </LoginData.Provider>
+    </LoginContext.Provider>
   );
 };

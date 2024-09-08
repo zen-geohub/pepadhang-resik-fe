@@ -105,4 +105,3 @@ export const submissionSchema = z
   );
 
 export type SubmissionSchema = z.infer<typeof submissionSchema>;
-// export default submissionSchema

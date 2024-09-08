@@ -5,6 +5,7 @@ import {
   Document,
   StyleSheet,
   Font,
+  Image,
 } from "@react-pdf/renderer";
 import { SubmissionSchema } from "./submissionSchema";
 
@@ -90,9 +91,10 @@ function FormData({ label, value }: FormDataProps) {
 
 type PDFProps = {
   result: SubmissionSchema;
+  image: string;
 };
 
-const PDFTemplate = ({ result }: PDFProps) => {
+const PDFTemplate = ({ result, image }: PDFProps) => {
   const area = result["Ukuran Panjang (m)"] * result["Ukuran Lebar (m)"];
   let size;
 
@@ -205,7 +207,17 @@ const PDFTemplate = ({ result }: PDFProps) => {
             }
           />
         )}
-        {/* <FormData label="9) Denah Lokasi" value={"Coming soon"} /> */}
+        <FormData label="9) Denah Lokasi" value={""} />
+        <Image
+          src={image}
+          style={{
+            width: "100%",
+            height: "200px",
+            marginBottom: "20px",
+            objectFit: "cover",
+            objectPosition: "50% 50%",
+          }}
+        />
 
         <View
           style={{
@@ -232,15 +244,15 @@ const PDFTemplate = ({ result }: PDFProps) => {
           label="4) Ukuran Luas (m&sup2;)"
           value={`${
             result["Ukuran Panjang (m)"] * result["Ukuran Lebar (m)"]
-          } m²;`}
+          } m²`}
         />
         <FormData label="5) Kategori Ukuran" value={size} />
         <FormData label="6) Sisi Hadap" value={result["Sisi Hadap"]} />
         {/* <FormData label="7) Foto" value={"Coming soon"} /> */}
         <FormData label="7) Naskah" value={result["Naskah"]} />
-        {result["Naskah Produk Lainnya"] !== "" ? (
+        {result["Naskah"] === "Produk Lainnya" ? (
           <FormData
-            label="6) Naskah Produk Lainnya"
+            label="8) Naskah Produk Lainnya"
             value={result["Naskah Produk Lainnya"] || ""}
           />
         ) : null}

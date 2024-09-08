@@ -55,24 +55,24 @@ export type AdvertisePoint = {
 interface AdvertiseContext {
   advertisePoint: AdvertisePoint[];
   setAdvertisePoint: Dispatch<SetStateAction<AdvertisePoint[]>>;
-  fetchData: () => Promise<void>
+  fetchData: () => Promise<void>;
 }
 
-export const AdvertiseData = createContext<AdvertiseContext>({
+export const DataContext = createContext<AdvertiseContext>({
   advertisePoint: [],
   setAdvertisePoint: () => {},
-  fetchData: async () => {}
+  fetchData: async () => {},
 });
 
-export const DataContext: FC<{ children: ReactNode }> = ({ children }) => {
+export const DataProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [advertisePoint, setAdvertisePoint] = useState<AdvertisePoint[]>([]);
-  const {isLogin} = useLogin()
+  const { isLogin } = useLogin();
 
-  const fetchData = async() => {
+  const fetchData = async () => {
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND}/data`, {
         method: "GET",
-        credentials: "include"
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -83,19 +83,19 @@ export const DataContext: FC<{ children: ReactNode }> = ({ children }) => {
       setAdvertisePoint(data);
     } catch (error) {
       console.log("Gagal mendapatkan data: ", error);
-      toast('Gagal mendapatkan data.')
+      toast("Gagal mendapatkan data.");
     }
-  }
+  };
 
   useEffect(() => {
-    isLogin.role === "admin" && fetchData()
+    isLogin.role === "admin" && fetchData();
   }, [isLogin]);
 
   return (
-    <AdvertiseData.Provider value={{ advertisePoint, setAdvertisePoint, fetchData }}>
+    <DataContext.Provider
+      value={{ advertisePoint, setAdvertisePoint, fetchData }}
+    >
       {children}
-    </AdvertiseData.Provider>
+    </DataContext.Provider>
   );
 };
-
-

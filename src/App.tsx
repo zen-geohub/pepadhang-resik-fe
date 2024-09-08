@@ -1,12 +1,12 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { MapProvider } from "react-map-gl/maplibre";
 import { ThemeProvider } from "./components/theme-provider";
-import { DataContext } from "./contexts/DataContext";
+import { DataProvider } from "./contexts/DataContext";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Submission from "./pages/Submission";
 import DataManager from "./pages/DataManager";
-import { LoginContext } from "./contexts/LoginContext";
+import { LoginProvider } from "./contexts/LoginContext";
 import { Toaster } from "./components/ui/sonner";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -14,8 +14,8 @@ function App() {
   return (
     <BrowserRouter>
       <ThemeProvider>
-        <LoginContext>
-          <DataContext>
+        <LoginProvider>
+          <DataProvider>
             <MapProvider>
               <Routes>
                 <Route path="/" element={<Home />} />
@@ -27,8 +27,8 @@ function App() {
               </Routes>
               <Toaster />
             </MapProvider>
-          </DataContext>
-        </LoginContext>
+          </DataProvider>
+        </LoginProvider>
       </ThemeProvider>
     </BrowserRouter>
   );

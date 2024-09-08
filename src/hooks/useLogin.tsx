@@ -1,8 +1,8 @@
-import { LoginData } from "@/contexts/LoginContext";
+import { LoginContext } from "@/contexts/LoginContext";
 import { useContext } from "react";
 
 export const useLogin = () => {
-  const context = useContext(LoginData);
+  const context = useContext(LoginContext);
 
   if (context === undefined)
     throw new Error("useLogin must be used within a LoginProvider");
