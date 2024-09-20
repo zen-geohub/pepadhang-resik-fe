@@ -17,6 +17,15 @@ module.exports = {
       },
     },
     extend: {
+      keyframes: {
+        bounce: {
+          '0%, 100%': { transform: 'translateY(-10%)' },
+          '50%': { transform: 'translateY(10%)' },
+        },
+      },
+      animation: {
+        bounce: 'bounce 1s infinite',
+      },
       fontFamily: {
         poppins: ['Poppins']
       },
