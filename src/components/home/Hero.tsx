@@ -5,22 +5,23 @@ import heroLight from "../../assets/hero_light.png";
 import heroDark from "../../assets/hero_dark.png";
 import { useTheme } from "@/hooks/useTheme";
 import { useLogin } from "@/hooks/useLogin";
+// import { CaretDownIcon } from "@radix-ui/react-icons";
 
 const Hero = () => {
   const { theme } = useTheme();
   const { isLogin } = useLogin();
 
   return (
-    <div className="w-full h-full relative font-poppins">
+    <div className="w-full h-5/6 relative font-poppins">
       {theme === "light" ? (
         <img
           src={heroLight}
-          className="object-cover h-full absolute top-0 brightness-50"
+          className="object-cover w-full h-full absolute top-0 brightness-50"
         />
       ) : (
         <img
           src={heroDark}
-          className="object-cover h-full absolute top-0 brightness-50"
+          className="object-cover w-full h-full absolute top-0 brightness-50"
         />
       )}
 
@@ -44,6 +45,11 @@ const Hero = () => {
           )}
         </div>
       </div>
+
+      {/* <div className="w-full p-2 bottom-0 absolute flex text-white flex-col items-center justify-center">
+        <p className="text-xs">Pengajuan KKPR Reklame</p>
+        <CaretDownIcon className="animate-bounce w-5 h-5" />
+      </div> */}
     </div>
   );
 };
